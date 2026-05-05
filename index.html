@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+<meta charset="UTF-8">
+<title>🌈 PRO MAX Խաղ</title>
+
+<style>
+body {
+    margin:0;
+    font-family:Arial;
+    text-align:center;
+    background: linear-gradient(270deg,#ff9a9e,#6dd5fa,#a18cd1);
+    background-size:600% 600%;
+    animation:bg 10s infinite;
+    color:white;
+}
+@keyframes bg {
+    0%{background-position:0%}
+    50%{background-position:100%}
+    100%{background-position:0%}
+}
+
+.card {
+    margin-top:60px;
+    background:rgba(0,0,0,0.4);
+    padding:30px;
+    border-radius:20px;
+    display:inline-block;
+    box-shadow:0 0 20px black;
+}
+
+button {
+    padding:12px 25px;
+    margin:10px;
+    border:none;
+    border-radius:12px;
+    font-size:18px;
+    cursor:pointer;
+}
+
+.green{background:#4CAF50;}
+.red{background:#f44336;}
+.blue{background:#2196F3;}
+.orange{background:#ff9800;}
+.purple{background:#9c27b0;}
+
+#timer {font-size:20px;}
+</style>
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+<meta charset="UTF-8">
+<title>🌈 Իրավունքների Խաղ PRO</title>
+
+<style>
+body {
+    margin:0;
+    font-family:Arial;
+    text-align:center;
+    background: linear-gradient(270deg,#ff9a9e,#6dd5fa,#a18cd1);
+    background-size:600% 600%;
+    animation:bg 10s infinite;
+    color:white;
+}
+
+@keyframes bg {
+    0%{background-position:0%}
+    50%{background-position:100%}
+    100%{background-position:0%}
+}
+
+.card {
+    margin-top:60px;
+    background:rgba(0,0,0,0.4);
+    padding:30px;
+    border-radius:20px;
+    display:inline-block;
+}
+
+button {
+    padding:12px 25px;
+    margin:10px;
+    border:none;
+    border-radius:12px;
+    font-size:18px;
+    cursor:pointer;
+}
+
+.green{background:#4CAF50;}
+.red{background:#f44336;}
+.blue{background:#2196F3;}
+.orange{background:#ff9800;}
+.purple{background:#9c27b0;}
+
+</style>
+</head>
+
+<body>
+
+<div id="menu" class="card">
+<h1>🌈 Խաղ ընտրիր</h1>
+<button class="green" onclick="start('yesno')">✔ Այո / Ոչ</button>
+<button class="orange" onclick="start('quiz')">🧠 Quiz</button>
+</div>
+
+<div id="game" class="card" style="display:none;">
+<h2 id="q"></h2>
+<div id="btns"></div>
+<p id="res"></p>
+<p id="score"></p>
+<button class="purple" onclick="back()">🔙 Menu</button>
+</div>
+
+<script>
+
+let i=0;
+let score=0;
+let mode="";
+
+// 10 YES/NO QUESTIONS
+const yesno=[
+{q:"Երեխան ունի կրթության իրավունք?",a:1},
+{q:"Երեխային կարելի է ծեծել?",a:2},
+{q:"Երեխան իրավունք ունի խաղալ?",a:1},
+{q:"Երեխան ունի առողջության իրավունք?",a:1},
+{q:"Երեխային կարելի է աշխատեցնել պարտադրանքով?",a:2},
+{q:"Երեխան ունի սիրո իրավունք?",a:1},
+{q:"Երեխան կարող է չսովորել դպրոցում?",a:2},
+{q:"Երեխան իրավունք ունի կարծիք հայտնել?",a:1},
+{q:"Երեխային կարելի է անտեսել?",a:2},
+{q:"Երեխան ունի պաշտպանության իրավունք?",a:1}
+];
+
+// 10 QUIZ QUESTIONS
+const quiz=[
+{q:"Ի՞նչ է ճիշտ իրավունքը?",o:["Ծեծ","Կրթություն","Պատիժ"],a:2},
+{q:"Ինչ չի կարելի անել երեխային?",o:["Խաղալ","Վիրավորել","Սովորել"],a:2},
+{q:"Երեխան ունի՞...",o:["Սեր","Վախ","Ցավ"],a:1},
+{q:"Որն է իրավունք?",o:["Շահագործում","Կրթություն","Աշխատանք"],a:2},
+{q:"Երեխան պետք է ունենա...",o:["Պաշտպանություն","Վախ","Վնաս"],a:1},
+{q:"Ի՞նչ է ճիշտ?",o:["Կրթություն","Ծեծ","Անտեսում"],a:1},
+{q:"Երեխան իրավունք ունի՞ խոսել",o:["Այո","Ոչ","Միգուցե"],a:1},
+{q:"Որն է սխալ?",o:["Սեր","Հոգատարություն","Բռնություն"],a:3},
+{q:"Երեխան ունի՞ առողջություն",o:["Այո","Ոչ","Չգիտեմ"],a:1},
+{q:"Ի՞նչ է պետք երեխային",o:["Խնամք","Վնաս","Անտեսում"],a:1}
+];
+
+function start(m){
+    mode=m;
+    i=0;
+    score=0;
+
+    document.getElementById("menu").style.display="none";
+    document.getElementById("game").style.display="block";
+
+    next();
+}
+
+function next(){
+    let data = mode==="yesno"? yesno : quiz;
+
+    if(i>=data.length){
+        document.getElementById("q").innerText="🎉 Ավարտվեց";
+        document.getElementById("btns").innerHTML="";
+        document.getElementById("score").innerText="🏆 Միավոր: "+score+" / 10";
+        return;
+    }
+
+    document.getElementById("q").innerText=data[i].q;
+    document.getElementById("res").innerText="";
+
+    let btns=document.getElementById("btns");
+    btns.innerHTML="";
+
+    if(mode==="yesno"){
+        btns.innerHTML=`
+        <button class="green" onclick="ans(1)">Այո</button>
+        <button class="red" onclick="ans(2)">Ոչ</button>`;
+    } else {
+        btns.innerHTML=`
+        <button class="blue" onclick="ans(1)">${data[i].o[0]}</button>
+        <button class="blue" onclick="ans(2)">${data[i].o[1]}</button>
+        <button class="blue" onclick="ans(3)">${data[i].o[2]}</button>`;
+    }
+}
+
+function ans(a){
+    let data = mode==="yesno"? yesno : quiz;
+
+    if(a===data[i].a){
+        document.getElementById("res").innerText="✔ Ճիշտ";
+        score++;
+    } else {
+        document.getElementById("res").innerText="❌ Սխալ";
+    }
+
+    i++;
+    setTimeout(next,700);
+}
+
+function back(){
+    document.getElementById("game").style.display="none";
+    document.getElementById("menu").style.display="block";
+}
+
+</script>
+
+</body>
+</html>
